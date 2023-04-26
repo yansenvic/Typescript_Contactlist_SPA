@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:ts": "tsc",
+    "build:webpack:client": "webpack --config webpack.config.client.js",
+    "build:webpack:server": "webpack --config webpack.config.server.js",
+    "build": "npm run build:ts && npm run build:webpack:client && npm run build:webpack:server",
+    "start": "npm run build && node dist/server.js"
   },
   "repository": {
     "type": "git",
