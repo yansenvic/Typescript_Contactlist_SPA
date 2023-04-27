@@ -1,8 +1,8 @@
-import { state, setState } from "./state";
+import { state, setState, Contact } from "./state";
 
-export function delFav(id : number) : void {
+export function delFav(id: string): void {
   const result = state.favContacts.filter(filterid);
-  function filterid(data: { id: number; }) {
+  function filterid(data: Contact) {
     return data.id !== id;
   }
   setState({

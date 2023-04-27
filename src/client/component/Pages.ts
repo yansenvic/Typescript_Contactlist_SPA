@@ -1,6 +1,9 @@
 import { state } from "../state";
 
-export function Pages(props: { totalData: any; onChange: any; }) {
+export function Pages(props: {
+  totalData: number;
+  onChange: (number: number) => void;
+}) {
   const totalPage = Math.ceil(props.totalData / 10);
   let div = document.createElement("div");
   for (let index = 1; index <= totalPage; index++) {

@@ -4,7 +4,7 @@ import { InputText } from "../component/InputText";
 import { Button } from "../component/Button";
 import { ContactList } from "../component/ContactList";
 import { Pages } from "../component/Pages";
-import { state, setState } from "../state";
+import { state, setState, Contact } from "../state";
 
 export function FavoritesPage() {
   const filterData = filterFavContactslist();
@@ -12,7 +12,7 @@ export function FavoritesPage() {
   const header = HeaderText("Favorite Contact List");
   const input = InputText({
     value: state.searchValueFavorite,
-    onInput: function (searchValues : string) {
+    onInput: function (searchValues: string) {
       setState({ searchValueFavorite: searchValues });
     },
   });
@@ -28,7 +28,7 @@ export function FavoritesPage() {
   });
   const page = Pages({
     totalData: state.favContacts.filter(filterName).length,
-    onChange: function (number : number) {
+    onChange: function (number: number) {
       setState({ currentPageFavorite: number });
     },
   });
@@ -55,13 +55,8 @@ function filterFavContactslist() {
   ];
 }
 
-function filterName(item: { firstName: string; maidenName: string; lastName: string; }) {
-  const fullname = (
-    item.firstName +
-    " " +
-    item.maidenName +
-    " " +
-    item.lastName
-  ).toLowerCase();
+function filterName(item: Contact) {
+  const fullname: string =
+    `${item.firstName} ${item.maidenName} ${item.lastName}`.toLowerCase();
   return fullname.match(state.searchValueFavorite.toLowerCase());
 }

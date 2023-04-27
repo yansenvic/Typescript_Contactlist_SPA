@@ -1,6 +1,6 @@
 import { state, setState } from "./state";
 
-export function fetchData() : void {
+export function fetchData(): void {
   const limit = 10;
   const skip = (state.currentPage - 1) * limit;
   fetch(

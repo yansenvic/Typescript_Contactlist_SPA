@@ -2,48 +2,47 @@ import { Render } from "./index";
 import { fetchData } from "./fetchData";
 
 export type Contact = {
-"id": string,
-"firstName": string,
-"lastName": string,
-"maidenName": string,
-"age": number,
-"gender": string,
-"email": string,
-"phone": string,
-"username": string,
-"password": string,
-"birthDate": string,
-"image": string,
-"bloodGroup": string,
-"height": number,
-"weight": number,
-"eyeColor": string,
-"hair": {
-  "color": string,
-  "type": string
-},
-"domain": string,
-"ip": string,
-}
-
+  id: string;
+  firstName: string;
+  lastName: string;
+  maidenName: string;
+  age: number;
+  gender: string;
+  email: string;
+  phone: string;
+  username: string;
+  password: string;
+  birthDate: string;
+  image: string;
+  bloodGroup: string;
+  height: number;
+  weight: number;
+  eyeColor: string;
+  hair: {
+    color: string;
+    type: string;
+  };
+  domain: string;
+  ip: string;
+};
 
 export type State = {
-  path: string,
-  contacts: Contact[],
-  favContacts: Contact[],
-  searchValue: string,
-  searchValueFavorite: string,
-  currentPage: number,
-  currentPageFavorite: number,
-  isLoading: boolean,
-  errorMassage: string,
-  totalData: number,
-}
+  path: string;
+  contacts: Contact[];
+  favContacts: Contact[];
+  searchValue: string;
+  searchValueFavorite: string;
+  currentPage: number;
+  currentPageFavorite: number;
+  isLoading: boolean;
+  errorMassage: string;
+  totalData: number;
+};
 
-export let state : State = {
+export let state: State = {
   path: window.location.pathname,
   contacts: [],
-  favContacts: JSON.parse(localStorage.getItem("favContacts")) ?? [],
+  favContacts: JSON.parse(localStorage.getItem("favContacts") ?? "[]"),
   searchValue: "",
   searchValueFavorite: "",
   currentPage: 1,
@@ -53,7 +52,9 @@ export let state : State = {
   totalData: 0,
 };
 
-export function setState(newState : {}) : void {
+//partial : https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+export function setState(newState: Partial<State>): void {
   const prevState = { ...state };
   const nextState = { ...state, ...newState };
   state = nextState;
@@ -61,9 +62,9 @@ export function setState(newState : {}) : void {
   Render();
 }
 
-let timer: string | number | NodeJS.Timeout | undefined //belum tahu mau diisi tipe apa
+let timer: NodeJS.Timeout;
 
-export function onStateChange(prevState : State, nextState : State) : void {
+export function onStateChange(prevState: State, nextState: State): void {
   if (prevState.path !== nextState.path) {
     history.pushState(null, "", nextState.path);
   }
@@ -72,7 +73,7 @@ export function onStateChange(prevState : State, nextState : State) : void {
     if (timer) {
       clearTimeout(timer);
     }
-    timer = setTimeout(() => {
+    timer = setTimeout((): void => {
       fetchData();
       setState({ isLoading: false, currentPage: 1 });
     }, 500);

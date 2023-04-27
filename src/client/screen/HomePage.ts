@@ -11,7 +11,7 @@ export function HomePage() {
   const header = HeaderText("Contact List");
   const input = InputText({
     value: state.searchValue,
-    onInput: function (searchValues : string) {
+    onInput: function (searchValues: string) {
       setState({ searchValue: searchValues });
     },
   });
@@ -27,7 +27,7 @@ export function HomePage() {
   });
   const page = Pages({
     totalData: state.totalData,
-    onChange: function (number : number) {
+    onChange: function (number: number) {
       setState({ currentPage: number });
     },
   });

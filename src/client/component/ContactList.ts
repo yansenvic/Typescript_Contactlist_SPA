@@ -1,8 +1,8 @@
-import { state, setState } from "../state.js";
+import { state, setState, Contact } from "../state.js";
 import { Button } from "./Button.js";
 import { delFav } from "../delFav.js";
 
-export function ContactList(props: { currentPage: number; data: any; }) {
+export function ContactList(props: { currentPage: number; data: Contact[] }) {
   const limit = 10;
   const list = document.createElement("ol");
   list.start = (props.currentPage - 1) * limit + 1;
@@ -22,7 +22,7 @@ export function ContactList(props: { currentPage: number; data: any; }) {
             setState({
               favContacts: [
                 ...state.favContacts,
-                state.contacts[(contact.id - 1) % 10],
+                state.contacts[(parseInt(contact.id) - 1) % 10],
               ],
             });
           },

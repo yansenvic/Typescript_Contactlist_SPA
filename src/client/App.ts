@@ -9,5 +9,9 @@ export function App() {
     return homepage;
   } else if (state.path === "/favorites") {
     return favoritespage;
+  } else {
+    const error = document.createElement("P");
+    error.textContent = "Page not Found";
+    return error;
   }
 }
