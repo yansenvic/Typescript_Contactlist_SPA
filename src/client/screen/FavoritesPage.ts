@@ -4,7 +4,7 @@ import { InputText } from "../component/InputText";
 import { Button } from "../component/Button";
 import { ContactList } from "../component/ContactList";
 import { Pages } from "../component/Pages";
-import { state, setState, Contact } from "../state";
+import { state, Contact, sendAction } from "../state";
 
 export function FavoritesPage() {
   const filterData = filterFavContactslist();
@@ -13,13 +13,21 @@ export function FavoritesPage() {
   const input = InputText({
     value: state.searchValueFavorite,
     onInput: function (searchValues: string) {
-      setState({ searchValueFavorite: searchValues });
+      sendAction({
+        type: "CHANGE_SEARCH_VALUE_FAVORITE",
+        payload: searchValues,
+        number: 1,
+      });
     },
   });
   const button = Button({
     value: "Clear",
     onClick: () => {
-      setState({ searchValueFavorite: "" });
+      sendAction({
+        type: "CHANGE_SEARCH_VALUE_FAVORITE",
+        payload: "",
+        number: 1,
+      });
     },
   });
   const list = ContactList({
@@ -29,7 +37,7 @@ export function FavoritesPage() {
   const page = Pages({
     totalData: state.favContacts.filter(filterName).length,
     onChange: function (number: number) {
-      setState({ currentPageFavorite: number });
+      sendAction({ type: "CHANGE_PAGE_FAVORITE", number: number });
     },
   });
   const div = document.createElement("div");

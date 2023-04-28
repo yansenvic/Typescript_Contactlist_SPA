@@ -1,4 +1,4 @@
-import { state, setState } from "./state";
+import { state, sendAction } from "./state";
 
 export function fetchData(): void {
   const limit = 10;
@@ -11,14 +11,31 @@ export function fetchData(): void {
       return result.json();
     })
     .then((data) => {
-      setState({
-        contacts: [...data.users],
-        totalData: data.total,
-        errorMassage: "",
-      });
+      if (data.users.length === 0) {
+        sendAction({
+          type: "FETCH_EMPTY",
+          data: [],
+          payload: "",
+          number: 0,
+          status: false,
+        });
+      } else {
+        sendAction({
+          type: "FETCH_SUCCESS",
+          data: [...data.users],
+          payload: "",
+          number: data.total,
+          status: false,
+        });
+      }
     })
     .catch((err) => {
-      setState({ contacts: [], errorMassage: err.message, totalData: 0 });
-    })
-    .finally(() => setState({ isLoading: false }));
+      sendAction({
+        type: "FETCH_ERROR",
+        data: [],
+        payload: err.message,
+        number: 0,
+        status: false,
+      });
+    });
 }

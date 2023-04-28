@@ -4,7 +4,7 @@ import { InputText } from "../component/InputText";
 import { Button } from "../component/Button";
 import { ContactList } from "../component/ContactList";
 import { Pages } from "../component/Pages";
-import { state, setState, reducer, sendAction } from "../state";
+import { state, sendAction } from "../state";
 
 export function HomePage() {
   const navBar = NavBar();
@@ -12,19 +12,20 @@ export function HomePage() {
   const input = InputText({
     value: state.searchValue,
     onInput: function (searchValues: string) {
-      const newState = reducer(state, {
-        type: "CHANGE_INPUT_HOME",
+      sendAction({
+        type: "CHANGE_SEARCH_VALUE_HOME",
         payload: searchValues,
+        number: 1,
       });
-      setState(newState);
     },
   });
   const button = Button({
     value: "Clear",
     onClick: () => {
       sendAction({
-        type: "CHANGE_INPUT_HOME",
+        type: "CHANGE_SEARCH_VALUE_HOME",
         payload: "",
+        number: 1,
       });
     },
   });
@@ -35,7 +36,7 @@ export function HomePage() {
   const page = Pages({
     totalData: state.totalData,
     onChange: function (number: number) {
-      setState({ currentPage: number });
+      sendAction({ type: "CHANGE_PAGE_HOME", number: number });
     },
   });
   const div = document.createElement("div");

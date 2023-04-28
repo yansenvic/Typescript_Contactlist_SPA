@@ -1,4 +1,4 @@
-import { setState } from "../state";
+import { sendAction, setState } from "../state";
 
 export function Link(props: { pathname: string; label: string }) {
   const link = document.createElement("a");
@@ -7,7 +7,8 @@ export function Link(props: { pathname: string; label: string }) {
   link.onclick = function (event) {
     event.preventDefault();
     //@ts-ignore
-    setState({ path: new URL(event.target?.href).pathname });
+    const path = new URL(event.target?.href).pathname;
+    sendAction({ type: "CHANGE_PATH", payload: path });
   };
   return link;
 }

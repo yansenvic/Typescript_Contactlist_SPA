@@ -1,5 +1,5 @@
 import { App } from "./App";
-import { onStateChange, state } from "./state";
+import { sendAction } from "./state";
 
 export function Render() {
   const root: HTMLElement | null = document.getElementById("root");
@@ -32,4 +32,5 @@ export function Render() {
 
 Render();
 //@ts-ignore
-onStateChange({}, state);
+// onStateChange({}, state);
+sendAction({ type: "FETCH", status: true });

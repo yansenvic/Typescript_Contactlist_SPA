@@ -1,4 +1,4 @@
-import { state, setState, Contact } from "../state.js";
+import { state, Contact, sendAction } from "../state.js";
 import { Button } from "./Button.js";
 import { delFav } from "../delFav.js";
 
@@ -19,9 +19,9 @@ export function ContactList(props: { currentPage: number; data: Contact[] }) {
       onClick: buttonStatus
         ? () => delFav(contact.id)
         : () => {
-            // console.log(state.contacts[(parseInt(contact.id) - 1) % 10]); // yang lama salah
-            setState({
-              favContacts: [
+            sendAction({
+              type: "CHANGE_FAVORITE_DATA",
+              data: [
                 ...state.favContacts,
                 state.contacts[state.contacts.indexOf(contact)],
               ],

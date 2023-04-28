@@ -64,21 +64,67 @@ export function setState(newState: Partial<State>): void {
 
 export type Action = {
   type: string;
-  payload: any;
+  payload: string;
+  data: Contact[];
+  number: number;
+  status: boolean;
 };
 
-export function sendAction(action: Action) {
+export function sendAction(action: Partial<Action>) {
   const newState = reducer(state, action);
   setState(newState);
 }
 
-export function reducer(prevState: State, action: Action) {
+export function reducer(prevState: State, action: Partial<Action>) {
   switch (action.type) {
-    case "CHANGE_INPUT_HOME":
+    case "CHANGE_SEARCH_VALUE_HOME":
       return {
         ...prevState,
         searchValue: action.payload,
+        currentPage: action.number,
       };
+    case "CHANGE_SEARCH_VALUE_FAVORITE": {
+      return {
+        ...prevState,
+        searchValueFavorite: action.payload,
+        currentPageFavorite: action.number,
+      };
+    }
+    case "CHANGE_PAGE_HOME":
+      return { ...prevState, currentPage: action.number };
+    case "CHANGE_PAGE_FAVORITE":
+      return { ...prevState, currentPageFavorite: action.number };
+    case "FETCH": {
+      return { ...prevState, isLoading: action.status };
+    }
+    case "FETCH_SUCCESS":
+      return {
+        ...prevState,
+        contacts: action.data,
+        totalData: action.number,
+        errorMassage: action.payload,
+        isLoading: action.status,
+      };
+    case "FETCH_ERROR":
+      return {
+        ...prevState,
+        contacts: action.data,
+        totalData: action.number,
+        errorMassage: action.payload,
+        isLoading: action.status,
+      };
+    case "FETCH_EMPTY":
+      return {
+        ...prevState,
+        contacts: action.data,
+        totalData: action.number,
+        errorMassage: action.payload,
+        isLoading: action.status,
+      };
+    case "CHANGE_FAVORITE_DATA":
+      return { ...prevState, favContacts: action.data };
+    case "CHANGE_PATH":
+      return { ...prevState, path: action.payload };
     default:
       return { ...prevState };
   }
@@ -91,20 +137,18 @@ export function onStateChange(prevState: State, nextState: State): void {
     history.pushState(null, "", nextState.path);
   }
   if (prevState.searchValue !== nextState.searchValue) {
-    setState({ isLoading: true });
+    sendAction({ type: "FETCH", status: true });
+  }
+  if (prevState.currentPage !== nextState.currentPage) {
+    sendAction({ type: "FETCH", status: true });
+  }
+  if (prevState.isLoading !== nextState.isLoading) {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout((): void => {
       fetchData();
-      setState({ isLoading: false, currentPage: 1 });
     }, 500);
-  }
-  if (prevState.searchValueFavorite !== nextState.searchValueFavorite) {
-    setState({ currentPageFavorite: 1 });
-  }
-  if (prevState.currentPage !== nextState.currentPage) {
-    fetchData();
   }
   if (prevState.favContacts !== nextState.favContacts) {
     localStorage.setItem("favContacts", JSON.stringify(nextState.favContacts));
