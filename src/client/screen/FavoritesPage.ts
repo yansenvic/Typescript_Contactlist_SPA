@@ -16,7 +16,6 @@ export function FavoritesPage() {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_FAVORITE",
         payload: searchValues,
-        number: 1,
       });
     },
   });
@@ -26,7 +25,6 @@ export function FavoritesPage() {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_FAVORITE",
         payload: "",
-        number: 1,
       });
     },
   });
@@ -37,7 +35,7 @@ export function FavoritesPage() {
   const page = Pages({
     totalData: state.favContacts.filter(filterName).length,
     onChange: function (number: number) {
-      sendAction({ type: "CHANGE_PAGE_FAVORITE", number: number });
+      sendAction({ type: "CHANGE_PAGE_FAVORITE", payload: number });
     },
   });
   const div = document.createElement("div");

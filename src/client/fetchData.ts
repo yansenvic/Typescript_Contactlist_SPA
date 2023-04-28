@@ -12,30 +12,18 @@ export function fetchData(): void {
     })
     .then((data) => {
       if (data.users.length === 0) {
-        sendAction({
-          type: "FETCH_EMPTY",
-          data: [],
-          payload: "",
-          number: 0,
-          status: false,
-        });
+        sendAction({ type: "FETCH_EMPTY" });
       } else {
         sendAction({
           type: "FETCH_SUCCESS",
-          data: [...data.users],
-          payload: "",
-          number: data.total,
-          status: false,
+          payload: { contact: [...data.users], totalContact: data.total },
         });
       }
     })
     .catch((err) => {
       sendAction({
         type: "FETCH_ERROR",
-        data: [],
         payload: err.message,
-        number: 0,
-        status: false,
       });
     });
 }

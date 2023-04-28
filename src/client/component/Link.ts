@@ -1,4 +1,4 @@
-import { sendAction, setState } from "../state";
+import { sendAction } from "../state";
 
 export function Link(props: { pathname: string; label: string }) {
   const link = document.createElement("a");

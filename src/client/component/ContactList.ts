@@ -21,7 +21,7 @@ export function ContactList(props: { currentPage: number; data: Contact[] }) {
         : () => {
             sendAction({
               type: "CHANGE_FAVORITE_DATA",
-              data: [
+              payload: [
                 ...state.favContacts,
                 state.contacts[state.contacts.indexOf(contact)],
               ],

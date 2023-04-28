@@ -15,7 +15,6 @@ export function HomePage() {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_HOME",
         payload: searchValues,
-        number: 1,
       });
     },
   });
@@ -25,7 +24,6 @@ export function HomePage() {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_HOME",
         payload: "",
-        number: 1,
       });
     },
   });
@@ -36,7 +34,7 @@ export function HomePage() {
   const page = Pages({
     totalData: state.totalData,
     onChange: function (number: number) {
-      sendAction({ type: "CHANGE_PAGE_HOME", number: number });
+      sendAction({ type: "CHANGE_PAGE_HOME", payload: number });
     },
   });
   const div = document.createElement("div");

@@ -62,69 +62,89 @@ export function setState(newState: Partial<State>): void {
   Render();
 }
 
-export type Action = {
-  type: string;
-  payload: string;
-  data: Contact[];
-  number: number;
-  status: boolean;
-};
+export type Action =
+  | { type: "CHANGE_SEARCH_VALUE_HOME"; payload: string }
+  | { type: "CHANGE_SEARCH_VALUE_FAVORITE"; payload: string }
+  | { type: "CHANGE_PAGE_HOME"; payload: number }
+  | { type: "CHANGE_PAGE_FAVORITE"; payload: number }
+  | { type: "FETCH"; payload: boolean }
+  | {
+      type: "FETCH_SUCCESS";
+      payload: {
+        contact: Contact[];
+        totalContact: number;
+      };
+    }
+  | { type: "FETCH_ERROR"; payload: string }
+  | { type: "FETCH_EMPTY" }
+  | { type: "CHANGE_FAVORITE_DATA"; payload: Contact[] }
+  | { type: "CHANGE_PATH"; payload: string };
 
-export function sendAction(action: Partial<Action>) {
+export function sendAction(action: Action) {
   const newState = reducer(state, action);
   setState(newState);
 }
 
-export function reducer(prevState: State, action: Partial<Action>) {
+export function reducer(prevState: State, action: Action) {
   switch (action.type) {
     case "CHANGE_SEARCH_VALUE_HOME":
       return {
         ...prevState,
         searchValue: action.payload,
-        currentPage: action.number,
+        currentPage: 1,
       };
     case "CHANGE_SEARCH_VALUE_FAVORITE": {
       return {
         ...prevState,
         searchValueFavorite: action.payload,
-        currentPageFavorite: action.number,
+        currentPageFavorite: 1,
       };
     }
     case "CHANGE_PAGE_HOME":
-      return { ...prevState, currentPage: action.number };
+      return { ...prevState, currentPage: action.payload };
     case "CHANGE_PAGE_FAVORITE":
-      return { ...prevState, currentPageFavorite: action.number };
+      return { ...prevState, currentPageFavorite: action.payload };
     case "FETCH": {
-      return { ...prevState, isLoading: action.status };
+      return { ...prevState, isLoading: action.payload };
     }
     case "FETCH_SUCCESS":
       return {
         ...prevState,
-        contacts: action.data,
-        totalData: action.number,
-        errorMassage: action.payload,
-        isLoading: action.status,
+        contacts: action.payload.contact,
+        totalData: action.payload.totalContact,
+        errorMassage: "",
+        isLoading: false,
       };
     case "FETCH_ERROR":
       return {
         ...prevState,
-        contacts: action.data,
-        totalData: action.number,
+        contacts: [],
+        totalData: 0,
         errorMassage: action.payload,
-        isLoading: action.status,
+        isLoading: false,
       };
     case "FETCH_EMPTY":
       return {
         ...prevState,
-        contacts: action.data,
-        totalData: action.number,
-        errorMassage: action.payload,
-        isLoading: action.status,
+        contacts: [],
+        totalData: 0,
+        errorMassage: "",
+        isLoading: false,
       };
     case "CHANGE_FAVORITE_DATA":
-      return { ...prevState, favContacts: action.data };
+      return { ...prevState, favContacts: action.payload };
     case "CHANGE_PATH":
-      return { ...prevState, path: action.payload };
+      if (action.payload === "/favorites") {
+        return {
+          ...prevState,
+          path: action.payload,
+          currentPageFavorite: 1,
+        };
+      } else
+        return {
+          ...prevState,
+          path: action.payload,
+        };
     default:
       return { ...prevState };
   }
@@ -137,10 +157,10 @@ export function onStateChange(prevState: State, nextState: State): void {
     history.pushState(null, "", nextState.path);
   }
   if (prevState.searchValue !== nextState.searchValue) {
-    sendAction({ type: "FETCH", status: true });
+    sendAction({ type: "FETCH", payload: true });
   }
   if (prevState.currentPage !== nextState.currentPage) {
-    sendAction({ type: "FETCH", status: true });
+    sendAction({ type: "FETCH", payload: true });
   }
   if (prevState.isLoading !== nextState.isLoading) {
     if (timer) {
