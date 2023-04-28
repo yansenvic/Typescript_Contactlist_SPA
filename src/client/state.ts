@@ -62,6 +62,28 @@ export function setState(newState: Partial<State>): void {
   Render();
 }
 
+export type Action = {
+  type: string;
+  payload: any;
+};
+
+export function sendAction(action: Action) {
+  const newState = reducer(state, action);
+  setState(newState);
+}
+
+export function reducer(prevState: State, action: Action) {
+  switch (action.type) {
+    case "CHANGE_INPUT_HOME":
+      return {
+        ...prevState,
+        searchValue: action.payload,
+      };
+    default:
+      return { ...prevState };
+  }
+}
+
 let timer: NodeJS.Timeout;
 
 export function onStateChange(prevState: State, nextState: State): void {

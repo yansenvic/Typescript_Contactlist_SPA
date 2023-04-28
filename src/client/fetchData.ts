@@ -3,6 +3,7 @@ import { state, setState } from "./state";
 export function fetchData(): void {
   const limit = 10;
   const skip = (state.currentPage - 1) * limit;
+  //untuk filter yang berasal dari backend hanya bisa dijalankan pada filter firstname dan email
   fetch(
     `https://dummyjson.com/users/search?q=${state.searchValue}&skip=${skip}&limit=${limit}`
   )

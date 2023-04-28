@@ -19,10 +19,11 @@ export function ContactList(props: { currentPage: number; data: Contact[] }) {
       onClick: buttonStatus
         ? () => delFav(contact.id)
         : () => {
+            // console.log(state.contacts[(parseInt(contact.id) - 1) % 10]); // yang lama salah
             setState({
               favContacts: [
                 ...state.favContacts,
-                state.contacts[(parseInt(contact.id) - 1) % 10],
+                state.contacts[state.contacts.indexOf(contact)],
               ],
             });
           },

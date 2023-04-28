@@ -1,5 +1,5 @@
 import { App } from "./App";
-import { onStateChange, setState, state } from "./state";
+import { onStateChange, state } from "./state";
 
 export function Render() {
   const root: HTMLElement | null = document.getElementById("root");
