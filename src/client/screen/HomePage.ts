@@ -39,17 +39,17 @@ export function HomePage() {
   });
   const div = document.createElement("div");
   div.append(navBar, header, input, button);
-  if (state.isLoading) {
+  if (state.tagScreenHome === "Loading") {
     const loadingText = document.createElement("p");
     loadingText.textContent = "Data is Loading";
     div.append(loadingText);
-  } else if (state.errorMassage !== "") {
+  } else if (state.tagScreenHome === "Error") {
     const errorText = document.createElement("p");
     errorText.textContent = state.errorMassage;
     div.append(errorText);
-  } else if (state.totalData > 0) {
+  } else if (state.tagScreenHome === "Success") {
     div.append(list, page);
-  } else {
+  } else if (state.tagScreenHome === "Empty") {
     const emptyText = document.createElement("p");
     emptyText.textContent = "Data empty";
     div.append(emptyText);

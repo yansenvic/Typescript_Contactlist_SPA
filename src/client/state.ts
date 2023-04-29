@@ -34,13 +34,12 @@ export type State = {
   searchValueFavorite: string;
   currentPage: number;
   currentPageFavorite: number;
-  isLoading: boolean;
   tagScreenHome: TagScreenHome;
   errorMassage: string;
   totalData: number;
 };
 
-export type TagScreenHome = "Idle" | "Loading" | "Success" | "Erorr" | "Empty";
+export type TagScreenHome = "Idle" | "Loading" | "Success" | "Error" | "Empty";
 
 export let state: State = {
   path: window.location.pathname,
@@ -50,7 +49,6 @@ export let state: State = {
   searchValueFavorite: "",
   currentPage: 1,
   currentPageFavorite: 1,
-  isLoading: false,
   tagScreenHome: "Idle",
   errorMassage: "",
   totalData: 0,
@@ -72,19 +70,20 @@ export type Action =
   | { type: "CHANGE_SEARCH_VALUE_FAVORITE"; payload: string }
   | { type: "CHANGE_PAGE_HOME"; payload: number }
   | { type: "CHANGE_PAGE_FAVORITE"; payload: number }
-  | {
-      type: "FETCH";
-      payload: { loading: boolean; tagScreenHome: TagScreenHome };
-    }
+  | { type: "FETCH"; payload: TagScreenHome }
   | {
       type: "FETCH_SUCCESS";
       payload: {
         contact: Contact[];
         totalContact: number;
+        tagScreenHome: TagScreenHome;
       };
     }
-  | { type: "FETCH_ERROR"; payload: string }
-  | { type: "FETCH_EMPTY" }
+  | {
+      type: "FETCH_ERROR";
+      payload: { message: string; tagScreenHome: TagScreenHome };
+    }
+  | { type: "FETCH_EMPTY"; payload: TagScreenHome }
   | { type: "CHANGE_FAVORITE_DATA"; payload: Contact[] }
   | { type: "CHANGE_PATH"; payload: string };
 
@@ -119,8 +118,7 @@ export function reducer(prevState: State, action: Action) {
     case "FETCH": {
       return {
         ...prevState,
-        isLoading: action.payload.loading,
-        tagScreenHome: action.payload.tagScreenHome,
+        tagScreenHome: action.payload,
       };
     }
     case "FETCH_SUCCESS":
@@ -129,15 +127,15 @@ export function reducer(prevState: State, action: Action) {
         contacts: action.payload.contact,
         totalData: action.payload.totalContact,
         errorMassage: "",
-        isLoading: false,
+        tagScreenHome: action.payload.tagScreenHome,
       };
     case "FETCH_ERROR":
       return {
         ...prevState,
         contacts: [],
         totalData: 0,
-        errorMassage: action.payload,
-        isLoading: false,
+        errorMassage: action.payload.message,
+        tagScreenHome: action.payload.tagScreenHome,
       };
     case "FETCH_EMPTY":
       return {
@@ -145,7 +143,7 @@ export function reducer(prevState: State, action: Action) {
         contacts: [],
         totalData: 0,
         errorMassage: "",
-        isLoading: false,
+        tagScreenHome: action.payload,
       };
     case "CHANGE_FAVORITE_DATA":
       return { ...prevState, favContacts: action.payload };
@@ -173,18 +171,15 @@ export function onStateChange(prevState: State, nextState: State): void {
     history.pushState(null, "", nextState.path);
   }
   if (prevState.searchValue !== nextState.searchValue) {
-    sendAction({
-      type: "FETCH",
-      payload: { loading: true, tagScreenHome: "Loading" },
-    });
+    sendAction({ type: "FETCH", payload: "Loading" });
   }
   if (prevState.currentPage !== nextState.currentPage) {
-    sendAction({
-      type: "FETCH",
-      payload: { loading: true, tagScreenHome: "Loading" },
-    });
+    sendAction({ type: "FETCH", payload: "Loading" });
   }
-  if (prevState.isLoading !== nextState.isLoading) {
+  if (
+    prevState.tagScreenHome !== "Loading" &&
+    nextState.tagScreenHome === "Loading"
+  ) {
     if (timer) {
       clearTimeout(timer);
     }

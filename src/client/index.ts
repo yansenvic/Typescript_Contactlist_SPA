@@ -33,7 +33,4 @@ export function Render() {
 Render();
 //@ts-ignore
 // onStateChange({}, state);
-sendAction({
-  type: "FETCH",
-  payload: { loading: true, tagScreenHome: "Loading" },
-});
+sendAction({ type: "FETCH", payload: "Loading" });

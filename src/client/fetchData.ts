@@ -12,18 +12,22 @@ export function fetchData(): void {
     })
     .then((data) => {
       if (data.users.length === 0) {
-        sendAction({ type: "FETCH_EMPTY" });
+        sendAction({ type: "FETCH_EMPTY", payload: "Empty" });
       } else {
         sendAction({
           type: "FETCH_SUCCESS",
-          payload: { contact: [...data.users], totalContact: data.total },
+          payload: {
+            contact: [...data.users],
+            totalContact: data.total,
+            tagScreenHome: "Success",
+          },
         });
       }
     })
     .catch((err) => {
       sendAction({
         type: "FETCH_ERROR",
-        payload: err.message,
+        payload: { message: err.message, tagScreenHome: "Error" },
       });
     });
 }
