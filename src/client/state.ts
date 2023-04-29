@@ -35,9 +35,12 @@ export type State = {
   currentPage: number;
   currentPageFavorite: number;
   isLoading: boolean;
+  tagScreenHome: TagScreenHome;
   errorMassage: string;
   totalData: number;
 };
+
+export type TagScreenHome = "Idle" | "Loading" | "Success" | "Erorr" | "Empty";
 
 export let state: State = {
   path: window.location.pathname,
@@ -48,6 +51,7 @@ export let state: State = {
   currentPage: 1,
   currentPageFavorite: 1,
   isLoading: false,
+  tagScreenHome: "Idle",
   errorMassage: "",
   totalData: 0,
 };
@@ -62,12 +66,16 @@ export function setState(newState: Partial<State>): void {
   Render();
 }
 
+//penggunaan reduce State
 export type Action =
   | { type: "CHANGE_SEARCH_VALUE_HOME"; payload: string }
   | { type: "CHANGE_SEARCH_VALUE_FAVORITE"; payload: string }
   | { type: "CHANGE_PAGE_HOME"; payload: number }
   | { type: "CHANGE_PAGE_FAVORITE"; payload: number }
-  | { type: "FETCH"; payload: boolean }
+  | {
+      type: "FETCH";
+      payload: { loading: boolean; tagScreenHome: TagScreenHome };
+    }
   | {
       type: "FETCH_SUCCESS";
       payload: {
@@ -80,11 +88,15 @@ export type Action =
   | { type: "CHANGE_FAVORITE_DATA"; payload: Contact[] }
   | { type: "CHANGE_PATH"; payload: string };
 
+//penggunaan reduce State
 export function sendAction(action: Action) {
   const newState = reducer(state, action);
+  console.log(state);
   setState(newState);
+  console.log(state);
 }
 
+//penggunaan reduce State
 export function reducer(prevState: State, action: Action) {
   switch (action.type) {
     case "CHANGE_SEARCH_VALUE_HOME":
@@ -105,7 +117,11 @@ export function reducer(prevState: State, action: Action) {
     case "CHANGE_PAGE_FAVORITE":
       return { ...prevState, currentPageFavorite: action.payload };
     case "FETCH": {
-      return { ...prevState, isLoading: action.payload };
+      return {
+        ...prevState,
+        isLoading: action.payload.loading,
+        tagScreenHome: action.payload.tagScreenHome,
+      };
     }
     case "FETCH_SUCCESS":
       return {
@@ -157,10 +173,16 @@ export function onStateChange(prevState: State, nextState: State): void {
     history.pushState(null, "", nextState.path);
   }
   if (prevState.searchValue !== nextState.searchValue) {
-    sendAction({ type: "FETCH", payload: true });
+    sendAction({
+      type: "FETCH",
+      payload: { loading: true, tagScreenHome: "Loading" },
+    });
   }
   if (prevState.currentPage !== nextState.currentPage) {
-    sendAction({ type: "FETCH", payload: true });
+    sendAction({
+      type: "FETCH",
+      payload: { loading: true, tagScreenHome: "Loading" },
+    });
   }
   if (prevState.isLoading !== nextState.isLoading) {
     if (timer) {
