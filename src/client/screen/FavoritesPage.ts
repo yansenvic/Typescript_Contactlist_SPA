@@ -15,7 +15,7 @@ export function FavoritesPage() {
     onInput: function (searchValues: string) {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_FAVORITE",
-        payload: searchValues,
+        payload: { searchValueFavorite: searchValues },
       });
     },
   });
@@ -24,7 +24,7 @@ export function FavoritesPage() {
     onClick: () => {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_FAVORITE",
-        payload: "",
+        payload: { searchValueFavorite: "" },
       });
     },
   });
@@ -35,7 +35,10 @@ export function FavoritesPage() {
   const page = Pages({
     totalData: state.favContacts.filter(filterName).length,
     onChange: function (number: number) {
-      sendAction({ type: "CHANGE_PAGE_FAVORITE", payload: number });
+      sendAction({
+        type: "CHANGE_PAGE_FAVORITE",
+        payload: { currentPageFavorite: number },
+      });
     },
   });
   const div = document.createElement("div");

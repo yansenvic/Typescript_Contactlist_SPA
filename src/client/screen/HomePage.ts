@@ -14,7 +14,7 @@ export function HomePage() {
     onInput: function (searchValues: string) {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_HOME",
-        payload: searchValues,
+        payload: { searchValue: searchValues },
       });
     },
   });
@@ -23,7 +23,7 @@ export function HomePage() {
     onClick: () => {
       sendAction({
         type: "CHANGE_SEARCH_VALUE_HOME",
-        payload: "",
+        payload: { searchValue: "" },
       });
     },
   });
@@ -34,7 +34,10 @@ export function HomePage() {
   const page = Pages({
     totalData: state.totalData,
     onChange: function (number: number) {
-      sendAction({ type: "CHANGE_PAGE_HOME", payload: number });
+      sendAction({
+        type: "CHANGE_PAGE_HOME",
+        payload: { currentPage: number },
+      });
     },
   });
   const div = document.createElement("div");

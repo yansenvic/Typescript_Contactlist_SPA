@@ -21,10 +21,12 @@ export function ContactList(props: { currentPage: number; data: Contact[] }) {
         : () => {
             sendAction({
               type: "CHANGE_FAVORITE_DATA",
-              payload: [
-                ...state.favContacts,
-                state.contacts[state.contacts.indexOf(contact)],
-              ],
+              payload: {
+                contacts: [
+                  ...state.favContacts,
+                  state.contacts[state.contacts.indexOf(contact)],
+                ],
+              },
             });
           },
     });

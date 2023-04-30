@@ -12,7 +12,10 @@ export function fetchData(): void {
     })
     .then((data) => {
       if (data.users.length === 0) {
-        sendAction({ type: "FETCH_EMPTY", payload: "Empty" });
+        sendAction({
+          type: "FETCH_EMPTY",
+          payload: { tagScreenHome: "Empty" },
+        });
       } else {
         sendAction({
           type: "FETCH_SUCCESS",

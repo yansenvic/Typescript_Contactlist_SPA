@@ -66,11 +66,14 @@ export function setState(newState: Partial<State>): void {
 
 //penggunaan reduce State
 export type Action =
-  | { type: "CHANGE_SEARCH_VALUE_HOME"; payload: string }
-  | { type: "CHANGE_SEARCH_VALUE_FAVORITE"; payload: string }
-  | { type: "CHANGE_PAGE_HOME"; payload: number }
-  | { type: "CHANGE_PAGE_FAVORITE"; payload: number }
-  | { type: "FETCH"; payload: TagScreenHome }
+  | { type: "CHANGE_SEARCH_VALUE_HOME"; payload: { searchValue: string } }
+  | {
+      type: "CHANGE_SEARCH_VALUE_FAVORITE";
+      payload: { searchValueFavorite: string };
+    }
+  | { type: "CHANGE_PAGE_HOME"; payload: { currentPage: number } }
+  | { type: "CHANGE_PAGE_FAVORITE"; payload: { currentPageFavorite: number } }
+  | { type: "FETCH"; payload: { tagScreenHome: TagScreenHome } }
   | {
       type: "FETCH_SUCCESS";
       payload: {
@@ -83,82 +86,246 @@ export type Action =
       type: "FETCH_ERROR";
       payload: { message: string; tagScreenHome: TagScreenHome };
     }
-  | { type: "FETCH_EMPTY"; payload: TagScreenHome }
-  | { type: "CHANGE_FAVORITE_DATA"; payload: Contact[] }
-  | { type: "CHANGE_PATH"; payload: string };
+  | { type: "FETCH_EMPTY"; payload: { tagScreenHome: TagScreenHome } }
+  | { type: "CHANGE_FAVORITE_DATA"; payload: { contacts: Contact[] } }
+  | { type: "CHANGE_PATH"; payload: { path: string } };
 
 //penggunaan reduce State
 export function sendAction(action: Action) {
   const newState = reducer(state, action);
-  console.log(state);
   setState(newState);
-  console.log(state);
 }
 
 //penggunaan reduce State
 export function reducer(prevState: State, action: Action) {
-  switch (action.type) {
-    case "CHANGE_SEARCH_VALUE_HOME":
-      return {
-        ...prevState,
-        searchValue: action.payload,
-        currentPage: 1,
-      };
-    case "CHANGE_SEARCH_VALUE_FAVORITE": {
-      return {
-        ...prevState,
-        searchValueFavorite: action.payload,
-        currentPageFavorite: 1,
-      };
+  switch (prevState.tagScreenHome) {
+    case "Idle": {
+      switch (action.type) {
+        case "FETCH":
+          return {
+            ...prevState,
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        case "CHANGE_PATH": {
+          if (action.payload.path === "/favorites") {
+            return {
+              ...prevState,
+              path: action.payload.path,
+              currentPageFavorite: 1,
+            };
+          } else
+            return {
+              ...prevState,
+              path: action.payload.path,
+            };
+        }
+        case "CHANGE_SEARCH_VALUE_HOME": {
+          return {
+            ...prevState,
+            searchValue: action.payload.searchValue,
+            currentPage: 1,
+          };
+        }
+        case "CHANGE_SEARCH_VALUE_FAVORITE": {
+          return {
+            ...prevState,
+            searchValueFavorite: action.payload.searchValueFavorite,
+            currentPageFavorite: 1,
+          };
+        }
+        default:
+          return { ...prevState };
+      }
     }
-    case "CHANGE_PAGE_HOME":
-      return { ...prevState, currentPage: action.payload };
-    case "CHANGE_PAGE_FAVORITE":
-      return { ...prevState, currentPageFavorite: action.payload };
-    case "FETCH": {
-      return {
-        ...prevState,
-        tagScreenHome: action.payload,
-      };
+    case "Loading": {
+      switch (action.type) {
+        case "FETCH_SUCCESS": {
+          return {
+            ...prevState,
+            contacts: action.payload.contact,
+            totalData: action.payload.totalContact,
+            errorMassage: "",
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        }
+        case "FETCH_EMPTY": {
+          return {
+            ...prevState,
+            contacts: [],
+            totalData: 0,
+            errorMassage: "",
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        }
+        case "FETCH_ERROR": {
+          return {
+            ...prevState,
+            contacts: [],
+            totalData: 0,
+            errorMassage: action.payload.message,
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        }
+        case "CHANGE_PATH": {
+          if (action.payload.path === "/favorites") {
+            return {
+              ...prevState,
+              path: action.payload.path,
+              currentPageFavorite: 1,
+            };
+          } else
+            return {
+              ...prevState,
+              path: action.payload.path,
+            };
+        }
+        case "CHANGE_SEARCH_VALUE_HOME": {
+          return {
+            ...prevState,
+            searchValue: action.payload.searchValue,
+            currentPage: 1,
+          };
+        }
+        case "CHANGE_SEARCH_VALUE_FAVORITE": {
+          return {
+            ...prevState,
+            searchValueFavorite: action.payload.searchValueFavorite,
+            currentPageFavorite: 1,
+          };
+        }
+        default:
+          return { ...prevState };
+      }
     }
-    case "FETCH_SUCCESS":
-      return {
-        ...prevState,
-        contacts: action.payload.contact,
-        totalData: action.payload.totalContact,
-        errorMassage: "",
-        tagScreenHome: action.payload.tagScreenHome,
-      };
-    case "FETCH_ERROR":
-      return {
-        ...prevState,
-        contacts: [],
-        totalData: 0,
-        errorMassage: action.payload.message,
-        tagScreenHome: action.payload.tagScreenHome,
-      };
-    case "FETCH_EMPTY":
-      return {
-        ...prevState,
-        contacts: [],
-        totalData: 0,
-        errorMassage: "",
-        tagScreenHome: action.payload,
-      };
-    case "CHANGE_FAVORITE_DATA":
-      return { ...prevState, favContacts: action.payload };
-    case "CHANGE_PATH":
-      if (action.payload === "/favorites") {
-        return {
-          ...prevState,
-          path: action.payload,
-          currentPageFavorite: 1,
-        };
-      } else
-        return {
-          ...prevState,
-          path: action.payload,
-        };
+    case "Success": {
+      switch (action.type) {
+        case "FETCH": {
+          return {
+            ...prevState,
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        }
+        case "CHANGE_PATH": {
+          if (action.payload.path === "/favorites") {
+            return {
+              ...prevState,
+              path: action.payload.path,
+              currentPageFavorite: 1,
+            };
+          } else
+            return {
+              ...prevState,
+              path: action.payload.path,
+            };
+        }
+        case "CHANGE_SEARCH_VALUE_HOME": {
+          return {
+            ...prevState,
+            searchValue: action.payload.searchValue,
+            currentPage: 1,
+          };
+        }
+        case "CHANGE_SEARCH_VALUE_FAVORITE": {
+          return {
+            ...prevState,
+            searchValueFavorite: action.payload.searchValueFavorite,
+            currentPageFavorite: 1,
+          };
+        }
+        case "CHANGE_PAGE_HOME": {
+          return { ...prevState, currentPage: action.payload.currentPage };
+        }
+        case "CHANGE_PAGE_FAVORITE": {
+          return {
+            ...prevState,
+            currentPageFavorite: action.payload.currentPageFavorite,
+          };
+        }
+        case "CHANGE_FAVORITE_DATA": {
+          return { ...prevState, favContacts: action.payload.contacts };
+        }
+        default:
+          return { ...prevState };
+      }
+    }
+    case "Empty": {
+      switch (action.type) {
+        case "FETCH": {
+          return {
+            ...prevState,
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        }
+        case "CHANGE_PATH": {
+          if (action.payload.path === "/favorites") {
+            return {
+              ...prevState,
+              path: action.payload.path,
+              currentPageFavorite: 1,
+            };
+          } else
+            return {
+              ...prevState,
+              path: action.payload.path,
+            };
+        }
+        case "CHANGE_SEARCH_VALUE_HOME": {
+          return {
+            ...prevState,
+            searchValue: action.payload.searchValue,
+            currentPage: 1,
+          };
+        }
+        case "CHANGE_SEARCH_VALUE_FAVORITE": {
+          return {
+            ...prevState,
+            searchValueFavorite: action.payload.searchValueFavorite,
+            currentPageFavorite: 1,
+          };
+        }
+        default:
+          return { ...prevState };
+      }
+    }
+    case "Error": {
+      switch (action.type) {
+        case "FETCH": {
+          return {
+            ...prevState,
+            tagScreenHome: action.payload.tagScreenHome,
+          };
+        }
+        case "CHANGE_PATH": {
+          if (action.payload.path === "/favorites") {
+            return {
+              ...prevState,
+              path: action.payload.path,
+              currentPageFavorite: 1,
+            };
+          } else
+            return {
+              ...prevState,
+              path: action.payload.path,
+            };
+        }
+        case "CHANGE_SEARCH_VALUE_HOME": {
+          return {
+            ...prevState,
+            searchValue: action.payload.searchValue,
+            currentPage: 1,
+          };
+        }
+        case "CHANGE_SEARCH_VALUE_FAVORITE": {
+          return {
+            ...prevState,
+            searchValueFavorite: action.payload.searchValueFavorite,
+            currentPageFavorite: 1,
+          };
+        }
+        default:
+          return { ...prevState };
+      }
+    }
     default:
       return { ...prevState };
   }
@@ -171,10 +338,10 @@ export function onStateChange(prevState: State, nextState: State): void {
     history.pushState(null, "", nextState.path);
   }
   if (prevState.searchValue !== nextState.searchValue) {
-    sendAction({ type: "FETCH", payload: "Loading" });
+    sendAction({ type: "FETCH", payload: { tagScreenHome: "Loading" } });
   }
   if (prevState.currentPage !== nextState.currentPage) {
-    sendAction({ type: "FETCH", payload: "Loading" });
+    sendAction({ type: "FETCH", payload: { tagScreenHome: "Loading" } });
   }
   if (
     prevState.tagScreenHome !== "Loading" &&

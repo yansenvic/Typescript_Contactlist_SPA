@@ -8,7 +8,7 @@ export function Link(props: { pathname: string; label: string }) {
     event.preventDefault();
     //@ts-ignore
     const path = new URL(event.target?.href).pathname;
-    sendAction({ type: "CHANGE_PATH", payload: path });
+    sendAction({ type: "CHANGE_PATH", payload: { path: path } });
   };
   return link;
 }
