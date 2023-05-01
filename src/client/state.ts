@@ -39,7 +39,13 @@ export type State = {
   totalData: number;
 };
 
-export type TagScreenHome = "Idle" | "Loading" | "Success" | "Error" | "Empty";
+export type TagScreenHome =
+  | "Idle"
+  | "Loading"
+  | "Success"
+  | "Error"
+  | "Empty"
+  | string;
 
 export let state: State = {
   path: window.location.pathname,
@@ -104,20 +110,13 @@ export function reducer(prevState: State, action: Action) {
         case "FETCH":
           return {
             ...prevState,
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Loading",
           };
         case "CHANGE_PATH": {
-          if (action.payload.path === "/favorites") {
-            return {
-              ...prevState,
-              path: action.payload.path,
-              currentPageFavorite: 1,
-            };
-          } else
-            return {
-              ...prevState,
-              path: action.payload.path,
-            };
+          return {
+            ...prevState,
+            path: action.payload.path,
+          };
         }
         case "CHANGE_SEARCH_VALUE_HOME": {
           return {
@@ -145,7 +144,7 @@ export function reducer(prevState: State, action: Action) {
             contacts: action.payload.contact,
             totalData: action.payload.totalContact,
             errorMassage: "",
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Success",
           };
         }
         case "FETCH_EMPTY": {
@@ -154,7 +153,7 @@ export function reducer(prevState: State, action: Action) {
             contacts: [],
             totalData: 0,
             errorMassage: "",
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Empty",
           };
         }
         case "FETCH_ERROR": {
@@ -163,21 +162,14 @@ export function reducer(prevState: State, action: Action) {
             contacts: [],
             totalData: 0,
             errorMassage: action.payload.message,
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Error",
           };
         }
         case "CHANGE_PATH": {
-          if (action.payload.path === "/favorites") {
-            return {
-              ...prevState,
-              path: action.payload.path,
-              currentPageFavorite: 1,
-            };
-          } else
-            return {
-              ...prevState,
-              path: action.payload.path,
-            };
+          return {
+            ...prevState,
+            path: action.payload.path,
+          };
         }
         case "CHANGE_SEARCH_VALUE_HOME": {
           return {
@@ -193,6 +185,15 @@ export function reducer(prevState: State, action: Action) {
             currentPageFavorite: 1,
           };
         }
+        case "CHANGE_PAGE_FAVORITE": {
+          return {
+            ...prevState,
+            currentPageFavorite: action.payload.currentPageFavorite,
+          };
+        }
+        case "CHANGE_FAVORITE_DATA": {
+          return { ...prevState, favContacts: action.payload.contacts };
+        }
         default:
           return { ...prevState };
       }
@@ -202,21 +203,14 @@ export function reducer(prevState: State, action: Action) {
         case "FETCH": {
           return {
             ...prevState,
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Success",
           };
         }
         case "CHANGE_PATH": {
-          if (action.payload.path === "/favorites") {
-            return {
-              ...prevState,
-              path: action.payload.path,
-              currentPageFavorite: 1,
-            };
-          } else
-            return {
-              ...prevState,
-              path: action.payload.path,
-            };
+          return {
+            ...prevState,
+            path: action.payload.path,
+          };
         }
         case "CHANGE_SEARCH_VALUE_HOME": {
           return {
@@ -253,21 +247,14 @@ export function reducer(prevState: State, action: Action) {
         case "FETCH": {
           return {
             ...prevState,
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Empty",
           };
         }
         case "CHANGE_PATH": {
-          if (action.payload.path === "/favorites") {
-            return {
-              ...prevState,
-              path: action.payload.path,
-              currentPageFavorite: 1,
-            };
-          } else
-            return {
-              ...prevState,
-              path: action.payload.path,
-            };
+          return {
+            ...prevState,
+            path: action.payload.path,
+          };
         }
         case "CHANGE_SEARCH_VALUE_HOME": {
           return {
@@ -292,21 +279,14 @@ export function reducer(prevState: State, action: Action) {
         case "FETCH": {
           return {
             ...prevState,
-            tagScreenHome: action.payload.tagScreenHome,
+            tagScreenHome: "Error",
           };
         }
         case "CHANGE_PATH": {
-          if (action.payload.path === "/favorites") {
-            return {
-              ...prevState,
-              path: action.payload.path,
-              currentPageFavorite: 1,
-            };
-          } else
-            return {
-              ...prevState,
-              path: action.payload.path,
-            };
+          return {
+            ...prevState,
+            path: action.payload.path,
+          };
         }
         case "CHANGE_SEARCH_VALUE_HOME": {
           return {
@@ -336,6 +316,12 @@ let timer: NodeJS.Timeout;
 export function onStateChange(prevState: State, nextState: State): void {
   if (prevState.path !== nextState.path) {
     history.pushState(null, "", nextState.path);
+    if (nextState.path === "/favorites") {
+      sendAction({
+        type: "CHANGE_PAGE_FAVORITE",
+        payload: { currentPageFavorite: 1 },
+      });
+    }
   }
   if (prevState.searchValue !== nextState.searchValue) {
     sendAction({ type: "FETCH", payload: { tagScreenHome: "Loading" } });
